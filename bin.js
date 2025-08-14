@@ -8,7 +8,7 @@ function outputBins() {
     [
         "Recycling",
         "Food",
-        getWeekNo() % 2 == 0 ? "Garden" : "General Waste"
+        isGardenWasteWeek() ? "Garden" : "General Waste"
     ]
     .map(binName => {
             const binElement = binTemplate.cloneNode(true);
@@ -21,8 +21,24 @@ function outputBins() {
     binList.appendChild(fragment);
 }
 
-function getWeekNo() {
-    const date = new Date();
+function isGardenWasteWeek() {
+    const today = new Date();
+    const binDay = new Date(today);
+
+    // Thursday in current week at 5am (roughly when bins are collected)
+    binDay.setDate(today.getDate() + 3 - ((today.getDay() + 6) % 7));
+    binDay.setHours(5, 0, 0, 0)
+
+    const weekNo = getWeekNo(today);
+    if (today.getTime() > binDay.getTime()) {
+        return (weekNo + 1) % 2 == 0;
+    } else {
+        return weekNo % 2 == 0;
+    }
+}
+
+function getWeekNo(date) {
+    date = new Date(date);
     date.setHours(0, 0, 0, 0);
 
     // Thursday in current week decides the year.
