@@ -1,47 +1,44 @@
-window.onload = outputBins
-let id = 1;
+document.addEventListener('DOMContentLoaded', outputBins);
 
 function outputBins() {
-  const binTemplate = document.getElementById("bin-template");
-  const binList = document.getElementById("bin-list");
+    const binTemplate = document.getElementById("bin-template").content;
+    const binList = document.getElementById("bin-list");
+    const fragment = document.createDocumentFragment();
 
-  const weekNo = getWeekNo();
-  addBin(binTemplate, binList, "Recycling");
-  addBin(binTemplate, binList, "Food");
-  if (weekNo % 2 == 0) {
-    addBin(binTemplate, binList, "Garden");
-  } else {
-    addBin(binTemplate, binList, "General Waste");
-  }
-}
+    [
+        "Recycling",
+        "Food",
+        getWeekNo() % 2 == 0 ? "Garden" : "General Waste"
+    ]
+    .map(binName => {
+            const binElement = binTemplate.cloneNode(true);
+            const item = binElement.querySelector("#bin-item");
+            item.append(binName);
+            return binElement;
+        })
+        .forEach(item => fragment.appendChild(item));
 
-function addBin(binTemplate, binList, binName) {
-  const binElement = document.importNode(binTemplate.content, true);
-  const label = binElement.querySelector("li");
-  label.htmlFor = id;
-  label.append(binName);
-  binList.appendChild(binElement);
-  id++;
+        binList.appendChild(fragment);
 }
 
 function getWeekNo() {
-  const date = new Date();
-  date.setHours(0, 0, 0, 0);
+    const date = new Date();
+    date.setHours(0, 0, 0, 0);
 
-  // Thursday in current week decides the year.
-  date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
+    // Thursday in current week decides the year.
+    date.setDate(date.getDate() + 3 - ((date.getDay() + 6) % 7));
 
-  // January 4 is always in week 1.
-  var week1 = new Date(date.getFullYear(), 0, 4);
+    // January 4 is always in week 1.
+    var week1 = new Date(date.getFullYear(), 0, 4);
 
-  // Adjust to Thursday in week 1 and count number of weeks from date to week1.
-  return (
-    1 +
-    Math.round(
-      ((date.getTime() - week1.getTime()) / 86400000 -
-        3 +
-        ((week1.getDay() + 6) % 7)) /
-        7
-    )
-  );
+    // Adjust to Thursday in week 1 and count number of weeks from date to week1.
+    return (
+        1 +
+        Math.round(
+            ((date.getTime() - week1.getTime()) / 86400000 -
+                3 +
+                ((week1.getDay() + 6) % 7)) /
+            7
+        )
+    );
 }
