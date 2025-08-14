@@ -18,7 +18,7 @@ function outputBins() {
         })
         .forEach(item => fragment.appendChild(item));
 
-        binList.appendChild(fragment);
+    binList.appendChild(fragment);
 }
 
 function getWeekNo() {
